@@ -1,0 +1,40 @@
+﻿<div class="row" ng-cloak>
+    <div class="col-md-12">
+        <table class="table table-striped table-bordered text-center">
+            <tbody>
+                <tr>
+                    <th class="text-center">
+                        Less 10Mb
+                    </th>
+                    <th class="text-center">
+                        10Mb-50Mb
+                    </th>
+                    <th class="text-center">
+                        More 100Mb
+                    </th>
+                </tr>
+                <tr ng-hide="loading"><td>{{model.Less10}}</td><td>{{model.From10To50}}</td><td>{{model.More100}}</td></tr>
+                <tr></tr>
+                <tr>
+                    <td ng-show="loading">Loading... <img src="/content/img/loading.gif" /></td>
+                    <td ng-show="loading">Loading... <img src="/content/img/loading.gif" /></td>
+                    <td ng-show="loading">Loading... <img src="/content/img/loading.gif" /></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div>
+            <b>Current path:</b> <span>{{location}}</span>
+        </div>
+        <br />
+        <div class="col-md-12 table-bordered" ng-switch on="location || 'null'">
+            <ul>
+                <li ng-switch-when="null"></li>
+                <li ng-switch-default><a ng-click="getDirectoryData(location, true)"><u>..</u></a></li>
+                <li ng-repeat="drive in Alldrives">
+                    <a ng-click="getDirectoryData(location+drive, false)">{{drive}}</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
