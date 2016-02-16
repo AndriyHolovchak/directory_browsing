@@ -33,9 +33,9 @@ namespace DirectoryBrowsing.Controllers
                 var directories = _driveNames.GetDirectoryNames(path, getParent);
                 return Json(directories);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return BadRequest();
+                return InternalServerError(ex);
             }
         }
     }

@@ -1,27 +1,37 @@
 ﻿angular.module("directoryBrowsingApp")
-    .factory("countFilesService", function() {
+    .factory("countFilesService", function($http, $q) {
+        var cancelCountfilesRequest = null;
 
-        function getCountFiles($scope, $http, $q, newpath, cancelCountfilesRequest) {
-
-            $scope.loading = true;
+        function getCountFiles(path, callback) {
+            if (cancelCountfilesRequest) {
+                cancelCountfilesRequest.resolve();
+            }
+            if (!path) {
+                var countFiles = {
+                    Less10: "*",
+                    From10To50: "*",
+                    More100: "*"
+                };
+                callback(null, countFiles);
+                cancelCountfilesRequest = null;
+                return;
+            }
+            cancelCountfilesRequest = $q.defer();
             $http({
                 method: "GET",
                 url: "/api/countfiles",
-                params: { 'path': newpath },
+                params: { 'path': path },
                 timeout: cancelCountfilesRequest.promise
             }).success(function(data) {
-                $scope.model = {
+                var countFiles = {
                     Less10: data.CountOfFileLess10Mb,
                     From10To50: data.CountOfFileFrom10MbTo50Mb,
                     More100: data.CountOfFileMore100Mb
                 };
-                $scope.loading = false;
-            }).error(function(error) {
-                if (error) {
-                    alert(error);
-                }
-            }).finally(function() {
+                callback(null, countFiles);
                 cancelCountfilesRequest = null;
+            }).error(function(error) {
+                callback("canceled");
             });
         }
 

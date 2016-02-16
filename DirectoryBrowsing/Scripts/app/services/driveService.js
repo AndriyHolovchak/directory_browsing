@@ -1,16 +1,25 @@
 ﻿angular.module("directoryBrowsingApp")
-    .factory("driveService", function() {
+    .factory("driveService", function($http, countFilesService) {
 
-        function getDrives($scope, $http) {
+        function getDrives(callback) {
+
             $http.get("/api/directories").success(function(data) {
-                $scope.Alldrives = data.DriveNames;
-                $scope.model = {
-                    Less10: "-",
-                    From10To50: "-",
-                    More100: "-"
+
+                var drivesInfo = {
+                    drives: data.DriveNames,
                 };
+                callback(null, drivesInfo);
+
+                countFilesService.countFiles("", function(err, data) {
+                    if (err) {
+                        callback(err);
+                    } else {
+                        callback(null, null, data);
+                    }
+                });
+
             }).error(function(error) {
-                alert(error);
+                callback(error);
             });
         };
 
